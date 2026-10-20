@@ -134,7 +134,7 @@ const base = process.env.TEST_BASE_URL || "http://localhost:3000";
       ),
       "rgb(255, 255, 255)",
     );
-    assert.match(await page.locator("h1").innerText(), /SEU ESTILO/);
+    assert.match(await page.locator("h1").innerText(), /PRECISÃO/);
     await page
       .getByRole("navigation", { name: "Principal", exact: true })
       .getByRole("link", { name: "Sobre", exact: true })
@@ -228,6 +228,19 @@ const base = process.env.TEST_BASE_URL || "http://localhost:3000";
     assert.equal(await page.locator(".gallery-grid button").count(), 1);
     await page.locator(".gallery-grid button").click();
     await page.getByRole("dialog").waitFor();
+    await page.getByRole("button", { name: "Próxima imagem" }).click();
+    await page.getByRole("dialog", { name: "O tempo do cuidado" }).waitFor();
+    await page.keyboard.press("ArrowLeft");
+    await page
+      .getByRole("dialog", { name: "Precisão em perspectiva" })
+      .waitFor();
+    await page.getByRole("button", { name: "Ampliar enquadramento" }).click();
+    assert.equal(
+      await page
+        .getByRole("button", { name: "Reduzir imagem" })
+        .getAttribute("aria-pressed"),
+      "true",
+    );
     await page.keyboard.press("Escape");
     assert.equal(await page.getByRole("dialog").count(), 0);
     await page.goto(base + "/admin");
@@ -248,8 +261,57 @@ const base = process.env.TEST_BASE_URL || "http://localhost:3000";
         `Home overflow at ${width}`,
       );
     }
+    await page.setViewportSize({ width: 320, height: 480 });
+    await page.goto(base + "/servicos");
+    await page.waitForFunction(
+      () =>
+        getComputedStyle(document.querySelector("main .reveal")).opacity ===
+        "1",
+    );
+    assert.equal(
+      await page.locator(".editorial-service-row").count(),
+      8,
+      "All services remain available on small screens",
+    );
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(base);
+    await page.getByRole("button", { name: "Abrir menu" }).click();
+    await page.locator(".menu-editorial-image").waitFor();
+    await page.getByRole('navigation',{name:'Principal',exact:true}).getByRole('link',{name:'Sobre',exact:true}).click();
+    await page.waitForURL('**/sobre');
+    await page.locator('#mobile-menu').waitFor({state:'detached'});
+    await page.goto(base);
+    await page.getByRole('button',{name:'Abrir menu'}).click();
+    await page.keyboard.press("Escape");
+    const brandRect = await page.locator(".kinetic-brand").boundingBox();
+    await page.mouse.move(
+      brandRect.x + brandRect.width * 0.5,
+      brandRect.y + brandRect.height * 0.5,
+    );
+    await page.waitForFunction(() =>
+      Array.from(document.querySelectorAll(".kinetic-letter")).some((el) =>
+        el.style.transform.includes("translate"),
+      ),
+    );
+    await page.locator(".experience-chapter").scrollIntoViewIfNeeded();
+    const serviceRow = page.locator(".editorial-service-row").first();
+    await serviceRow.hover();
+    await page.locator(".service-follow-photo .editorial-photo").waitFor();
+    await page.locator(".precision-chapter").scrollIntoViewIfNeeded();
+    await page.getByRole("button", { name: "01 Lâmina" }).click();
+    await page
+      .getByRole("heading", { name: "A LÂMINA.", exact: true })
+      .waitFor();
+    await page
+      .getByRole("button", { name: "Restaurar ângulo da máquina" })
+      .click();
+    await page
+      .getByRole("heading", { name: "O INSTRUMENTO.", exact: true })
+      .waitFor();
     await context.close();
     const skipContext = await browser.newContext({
+      hasTouch: true,
+      isMobile: true,
       viewport: { width: 390, height: 844 },
     });
     const skipPage = await skipContext.newPage();
@@ -264,6 +326,32 @@ const base = process.env.TEST_BASE_URL || "http://localhost:3000";
     assert.equal(
       await skipPage.locator("#site-shell").evaluate((el) => el.inert),
       false,
+    );
+    await skipPage.goto(base + "/galeria");
+    await skipPage.locator(".gallery-grid button").first().click();
+    const swipe = await skipPage.locator(".exhibition-image").boundingBox();
+    const cdp = await skipContext.newCDPSession(skipPage);
+    const touchY = swipe.y + swipe.height / 2;
+    await cdp.send("Input.dispatchTouchEvent", {
+      type: "touchStart",
+      touchPoints: [{ x: swipe.x + swipe.width * 0.8, y: touchY }],
+    });
+    await cdp.send("Input.dispatchTouchEvent", {
+      type: "touchMove",
+      touchPoints: [{ x: swipe.x + swipe.width * 0.2, y: touchY }],
+    });
+    await cdp.send("Input.dispatchTouchEvent", {
+      type: "touchEnd",
+      touchPoints: [],
+    });
+    await skipPage
+      .getByRole("dialog", { name: "O tempo do cuidado" })
+      .waitFor();
+    await skipPage.getByRole("button", { name: "Fechar imagem" }).click();
+    assert.equal(
+      await skipPage.locator("#site-shell").evaluate((el) => el.inert),
+      false,
+      "Gallery must release background on close",
     );
     await skipContext.close();
     const reducedContext = await browser.newContext({
@@ -310,7 +398,7 @@ const base = process.env.TEST_BASE_URL || "http://localhost:3000";
     await reducedContext.close();
     assert.deepEqual(errors, [], "No runtime errors");
     console.log(
-      "PASS: cinematic intro, session, skip, reduced motion, focus isolation, white theme, routes, booking, admin, mobile, gallery and image fallback.",
+      "PASS: pre-paint intro, session, skip, reduced motion, routes, booking, admin, gallery navigation/zoom/swipe, desktop/mobile menu, typography physics, service hover, product controls, responsive layout and photo fallback.",
     );
   } finally {
     await browser.close();

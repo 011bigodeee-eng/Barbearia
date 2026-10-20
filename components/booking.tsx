@@ -2,7 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowUpRight, Check } from "lucide-react";
-import { services, money } from "@/lib/content";
+import EditorialPhoto from "./editorial-photo";
+import { services, money, photos } from "@/lib/content";
 const professionals = ["Profissional 01", "Profissional 02"];
 const slots = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"];
 const steps = ["Serviço", "Profissional", "Data & hora", "Resumo"];
@@ -69,9 +70,9 @@ export default function Booking() {
         </div>
         <span className="eyebrow">PRÉVIA INTERATIVA</span>
         <h2>
-          SEU ESTILO.
+          ESTILO RESERVADO.
           <br />
-          SEU MOMENTO.
+          NOS VEMOS EM BREVE.
         </h2>
         <p className="copy">Assim será o resumo da experiência escolhida.</p>
         <div className="booking-aside">{summary}</div>
@@ -160,6 +161,17 @@ export default function Booking() {
                   Perfis ilustrativos. A equipe real será apresentada na versão
                   final.
                 </p>
+                <div className="booking-professional-photo">
+                  <EditorialPhoto
+                    src={
+                      professional === professionals[0]
+                        ? photos.hero
+                        : photos.detail
+                    }
+                    alt="Foto ilustrativa, não representa um profissional cadastrado"
+                    sizes="400px"
+                  />
+                </div>
                 <label className="field">
                   Profissional demonstrativo
                   <select

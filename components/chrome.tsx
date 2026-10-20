@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { brand } from "@/lib/content";
+import EditorialPhoto from "./editorial-photo";
+import { brand, photos } from "@/lib/content";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { ArrowUpRight, Menu, X, ArrowUp } from "lucide-react";
@@ -14,8 +15,10 @@ const links = [
 ];
 export function Navigation() {
   const [open, setOpen] = useState(false);
+  const [menuPhoto, setMenuPhoto] = useState(photos.hero);
   const pathname = usePathname();
   const reduced = useReducedMotion();
+  useEffect(() => { setOpen(false); }, [pathname]);
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement;
@@ -87,13 +90,28 @@ export function Navigation() {
           className="mobile-menu"
           id="mobile-menu"
         >
-          <nav aria-label="Navegação móvel">
+          <nav aria-label="Navegação expandida">
             {[["Início", "/"], ...links, ["Agendamento", "/agendamento"]].map(
               ([n, p], i) => (
                 <Link
                   onClick={() => setOpen(false)}
                   key={p}
                   href={p}
+                  onPointerEnter={() =>
+                    setMenuPhoto(
+                      [photos.hero, photos.space, photos.cut, photos.detail][
+                        i % 4
+                      ],
+                    )
+                  }
+                  onFocus={() =>
+                    setMenuPhoto(
+                      [photos.hero, photos.space, photos.cut, photos.detail][
+                        i % 4
+                      ],
+                    )
+                  }
+                  aria-current={pathname === p ? "page" : undefined}
                   style={{ animationDelay: `${i * 35}ms` }}
                 >
                   <small>0{i + 1}</small>
@@ -103,6 +121,14 @@ export function Navigation() {
               ),
             )}
           </nav>
+          <div className="menu-editorial-image">
+            <EditorialPhoto
+              key={menuPhoto}
+              src={menuPhoto}
+              alt="Imagem ilustrativa da experiência editorial"
+            />
+            <span>O SEU TEMPO. O NOSSO OFÍCIO.</span>
+          </div>
         </motion.div>
       )}
     </>
@@ -154,7 +180,7 @@ export function Reveal({
       className={`reveal ${className}`}
       initial={reduce ? false : { opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.12 }}
+      viewport={{ once: true, amount: "some", margin: "0px 0px -40px 0px" }}
       transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
@@ -163,25 +189,44 @@ export function Reveal({
 }
 export function Footer() {
   return (
-    <footer>
-      <div className="footer-top">
-        <Link className="logo" href="/">
-          <span className="logo-name">{brand}</span>
-          <span className="logo-sub">THE ART OF GROOMING</span>
+    <footer className="cinematic-footer">
+      <Reveal>
+        <div className="section-label">
+          <span>O PRÓXIMO CAPÍTULO É SEU.</span>
+          <span>THE ART OF GROOMING</span>
+        </div>
+        <div className="footer-invitation">
+          <h2>
+            SEU PRÓXIMO ESTILO
+            <br />
+            <span>COMEÇA AQUI.</span>
+          </h2>
+          <Button href="/agendamento">AGENDAR AGORA</Button>
+        </div>
+        <div className="footer-contact">
+          <Link href="/contato">
+            CONTATO & LOCALIZAÇÃO <ArrowUpRight size={16} />
+          </Link>
+          <p>
+            Contatos, endereço e redes sociais
+            <br />
+            aguardam os dados reais da barbearia.
+          </p>
+          <Link href="/galeria">
+            UM NOVO OLHAR <ArrowUpRight size={16} />
+          </Link>
+        </div>
+      </Reveal>
+      <Reveal className="footer-wordmark">
+        <Link href="/" aria-label={brand}>
+          {brand}
         </Link>
-        <p>
-          Estilo é pessoal.
-          <br />O cuidado também deveria ser.
-        </p>
-        <Link href="/agendamento">
-          Seu próximo capítulo <ArrowUpRight />
-        </Link>
-      </div>
+      </Reveal>
       <div className="footer-bottom">
         <span>
           © {new Date().getFullYear()} {brand}
         </span>
-        <span>CONCEITO DEMONSTRATIVO · CONTEÚDO EDITÁVEL</span>
+        <span>PRÉVIA INTERATIVA · CONTEÚDO DEMONSTRATIVO</span>
         <a href="#conteudo" aria-label="Voltar ao conteúdo">
           VOLTAR AO TOPO <ArrowUp size={12} />
         </a>

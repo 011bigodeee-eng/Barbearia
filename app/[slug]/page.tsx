@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import EditorialPhoto from "@/components/editorial-photo";
-import ServiceCard from "@/components/service-card";
-import { services, photos, brand } from "@/lib/content";
+import ServiceList from "@/components/service-list";
+import TeamEditorial from "@/components/team-editorial";
+import { photos, brand } from "@/lib/content";
 import { Button, Reveal } from "@/components/chrome";
 import Gallery from "@/components/gallery";
 const titles: Record<string, string> = {
@@ -45,20 +46,7 @@ export default async function Page({
               Catálogo demonstrativo. Valores e horários são ilustrativos nesta
               prévia.
             </p>
-            <div className="catalog">
-              {services.map((s, i) => (
-                <ServiceCard
-                  key={s.id}
-                  service={s}
-                  index={i}
-                  photo={
-                    [photos.cut, photos.detail, photos.hero, photos.space][
-                      i % 4
-                    ]
-                  }
-                />
-              ))}
-            </div>
+            <ServiceList />
           </>
         )}
         {slug === "sobre" && (
@@ -95,24 +83,7 @@ export default async function Page({
               Esta é uma prévia editorial. Os perfis serão personalizados com
               fotos, nomes e especialidades da equipe real.
             </div>
-            <div className="team-preview">
-              {["01", "02"].map((n, i) => (
-                <article className="team-profile" key={n}>
-                  <EditorialPhoto
-                    src={[photos.hero, photos.detail][i]}
-                    alt="Imagem editorial ilustrativa do ofício de barbeiro"
-                  />
-                  <h3>Profissional {n}</h3>
-                  <p>
-                    Perfil demonstrativo. Nome, especialidade e imagem aguardam
-                    personalização com a equipe real.
-                  </p>
-                  <Button href="/agendamento" outline>
-                    EXPLORAR AGENDAMENTO
-                  </Button>
-                </article>
-              ))}
-            </div>
+            <TeamEditorial />
           </>
         )}
         {slug === "galeria" && <Gallery />}

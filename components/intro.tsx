@@ -107,6 +107,25 @@ export default function BrandIntro({ name }: { name: string }) {
           0.55,
         )
         .fromTo(
+          ".intro-fragment",
+          {
+            y: (i: number) => (i % 2 ? 24 : -24),
+            z: (i: number) => -80 - (i % 4) * 25,
+            rotationY: (i: number) => (i % 2 ? 35 : -35),
+            opacity: 0,
+          },
+          {
+            y: 0,
+            z: 0,
+            rotationY: 0,
+            opacity: 1,
+            duration: 0.85,
+            stagger: { amount: 0.3 },
+            ease: "power3.out",
+          },
+          0.55,
+        )
+        .fromTo(
           ".intro-spark",
           { opacity: 0, y: 18 },
           {
@@ -194,7 +213,11 @@ export default function BrandIntro({ name }: { name: string }) {
         ))}
       </div>
       <div className="intro-wordmark" aria-hidden="true">
-        {name}
+        {Array.from(name).map((letter, i) => (
+          <span className="intro-fragment" key={i}>
+            {letter === " " ? "\u00a0" : letter}
+          </span>
+        ))}
       </div>
       <p className="intro-caption">A ARTE ESTÁ NO DETALHE.</p>
       <button ref={skip} className="intro-skip" onClick={complete}>

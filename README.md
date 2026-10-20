@@ -1,6 +1,6 @@
 # BARBER STUDIO — prévia de design
 
-Prévia interativa em Next.js App Router, TypeScript, Tailwind, Motion e React Three Fiber. Identidade monocromática, Manrope hospedada localmente, galeria editorial, menu mobile e estudo 3D de navalha com fallback leve.
+Prévia interativa em Next.js App Router, TypeScript, Tailwind, Motion e React Three Fiber. Identidade monocromática, Manrope hospedada localmente, galeria editorial, menu mobile e estudo 3D de máquina cromada com fallback leve.
 
 ## Executar
 
@@ -34,8 +34,20 @@ A identidade atual usa superfícies brancas, Manrope, tipografia preta e fotogra
 
 Configure `NEXT_PUBLIC_BRAND_NAME` opcionalmente antes do build para personalizar o nome na intro, navegação, rodapé e metadados. O valor padrão vem de `lib/content.ts`. Os quatro pilares editoriais ficam em `highlights` no mesmo arquivo. Não existe edição administrativa persistente nesta prévia.
 
-Os cards têm profundidade sutil no mouse e são estáticos com movimento reduzido. A navalha 3D carrega apenas perto da seção em desktops compatíveis; usa geometria original, materiais físicos, iluminação de estúdio e fallback CSS em mobile, movimento reduzido ou falha gráfica. Fotografias têm `srcset`, lazy loading e fallback editorial identificado quando a rede falha.
+Os cards têm profundidade sutil no mouse e são estáticos com movimento reduzido. A máquina 3D carrega apenas perto da seção em desktops compatíveis; usa geometria original, materiais físicos, iluminação de estúdio e fallback CSS em mobile, movimento reduzido ou falha gráfica. Fotografias têm `srcset`, lazy loading e fallback editorial identificado quando a rede falha.
 
 O agendamento mantém a simulação local, agora em quatro etapas com progresso, volta preservando seleção e resumo lateral. Não há etapa de dados pessoais ou chamada de gravação. A integração de banco continua desativada conforme solicitado anteriormente.
 
 A cobertura inicial é instalada por um script no HTML, antes da primeira pintura, para evitar que o site apareça antes da intro. Sessões que já viram a intro e movimento reduzido abrem diretamente. Se os bundles demorarem mais de cinco segundos, a cobertura é removida e a intro tardia é descartada. Sem JavaScript, a cobertura não é instalada.
+
+## The Art of Grooming — experiência editorial
+
+A home agora é uma narrativa em cinco capítulos: identidade, precisão, artistas, experiência e próximo corte. A marca responde ao mouse com inércia e a fotografia principal expande na rolagem nativa. A intro mantém a cobertura anterior à primeira pintura e acrescenta montagem tipográfica por fragmentos, sem repetir durante a sessão.
+
+Os serviços são apresentados em linhas numeradas, com fotografia que segue o cursor no desktop. Em touch, telas menores e movimento reduzido, as imagens ficam visíveis sem depender de hover. O cursor complementar não substitui o cursor nativo nem captura cliques.
+
+A máquina é um modelo procedural original com corpo extrudado e biselado, textura de metal escovado gerada localmente, dentes, parafusos, chave e acabamento de empunhadura. O scroll move a apresentação, o mouse altera o ângulo e o arraste permite girar. Botões de detalhe mudam o enquadramento e têm uma opção de restaurar. Em mobile, movimento reduzido ou ausência de WebGL, uma ilustração CSS mantém a seção e os detalhes acessíveis. Nenhum modelo externo foi baixado.
+
+A galeria suporta filtros, tela cheia, zoom, botões anterior/próximo, teclas de seta, Escape e gesto lateral no celular. O menu editorial pode ser aberto também no desktop. Fotos de equipe, contatos e avaliações não são inventados como dados reais.
+
+Com o servidor ativo, `npm run test:graphics` usa Chromium/SwiftShader para exercitar WebGL, detalhes, arraste, restauração e troca para o fallback de movimento reduzido. `npm run test:browser` mantém os testes de entrada anterior à hidratação e acrescenta as novas interações. Não são benchmarks de desempenho nem validação de fotos externas.

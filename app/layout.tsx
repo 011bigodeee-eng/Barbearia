@@ -1,3 +1,4 @@
+import InteractiveCursor from "@/components/interactive-cursor";
 import { introBootstrap } from "@/lib/intro-bootstrap";
 import BrandIntro from "@/components/intro";
 import { brand } from "@/lib/content";
@@ -29,6 +30,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           Pular para o conteúdo
         </a>
         <Progress />
+        <InteractiveCursor />
         <BrandIntro name={brand} />
         <div id="site-shell">
           <Navigation />
