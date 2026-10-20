@@ -2116,3 +2116,16 @@ footer {
     font-size: 9px;
   }
 }
+/* This cover is selected by the parser-time script, before hydration. */
+html[data-intro-pending="true"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 99;
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-intro-pending="true"]::before {
+    display: none;
+  }
+}

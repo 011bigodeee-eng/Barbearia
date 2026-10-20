@@ -19,11 +19,13 @@ export default function BrandIntro({ name }: { name: string }) {
     } catch {
       /* Private browsing may block storage. */
     }
+    delete document.documentElement.dataset.introPending;
     setActive(false);
   }, []);
 
   useLayoutEffect(() => {
     if (pathname !== "/") {
+      delete document.documentElement.dataset.introPending;
       setActive(false);
       return;
     }
@@ -31,7 +33,14 @@ export default function BrandIntro({ name }: { name: string }) {
     try {
       seen ||= sessionStorage.getItem(SESSION_KEY) === "seen";
     } catch {}
-    if (seen || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (
+      seen ||
+      matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      document.documentElement.dataset.introExpired === "true"
+    ) {
+      delete document.documentElement.dataset.introPending;
+      return;
+    }
     setActive(true);
   }, [pathname]);
 
@@ -43,6 +52,8 @@ export default function BrandIntro({ name }: { name: string }) {
     const previousFocus = document.activeElement as HTMLElement | null;
     if (shell) shell.inert = true;
     document.body.style.overflow = "hidden";
+    // React's cover now owns the transition; remove the pre-paint cover so the white reveal is continuous.
+    delete document.documentElement.dataset.introPending;
     skip.current?.focus({ preventScroll: true });
     const media = matchMedia("(prefers-reduced-motion: reduce)");
     const stopForReducedMotion = () => {

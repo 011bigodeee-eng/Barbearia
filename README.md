@@ -37,3 +37,5 @@ Configure `NEXT_PUBLIC_BRAND_NAME` opcionalmente antes do build para personaliza
 Os cards têm profundidade sutil no mouse e são estáticos com movimento reduzido. A navalha 3D carrega apenas perto da seção em desktops compatíveis; usa geometria original, materiais físicos, iluminação de estúdio e fallback CSS em mobile, movimento reduzido ou falha gráfica. Fotografias têm `srcset`, lazy loading e fallback editorial identificado quando a rede falha.
 
 O agendamento mantém a simulação local, agora em quatro etapas com progresso, volta preservando seleção e resumo lateral. Não há etapa de dados pessoais ou chamada de gravação. A integração de banco continua desativada conforme solicitado anteriormente.
+
+A cobertura inicial é instalada por um script no HTML, antes da primeira pintura, para evitar que o site apareça antes da intro. Sessões que já viram a intro e movimento reduzido abrem diretamente. Se os bundles demorarem mais de cinco segundos, a cobertura é removida e a intro tardia é descartada. Sem JavaScript, a cobertura não é instalada.

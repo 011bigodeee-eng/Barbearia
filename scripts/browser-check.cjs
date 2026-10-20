@@ -9,6 +9,94 @@ const base = process.env.TEST_BASE_URL || "http://localhost:3000";
   });
   const errors = [];
   try {
+    // Block the application bundles to reproduce the original pre-hydration flash.
+    const cold = await browser.newContext();
+    await cold.route("**/_next/static/**/*.js", (route) => route.abort());
+    const coldPage = await cold.newPage();
+    await coldPage.goto(base, { waitUntil: "domcontentloaded" });
+    assert.equal(
+      await coldPage.evaluate(
+        () => document.documentElement.dataset.introPending,
+      ),
+      "true",
+      "First HTML paint must already be covered before React loads",
+    );
+    assert.equal(
+      await coldPage.evaluate(
+        () =>
+          getComputedStyle(document.documentElement, "::before")
+            .backgroundColor,
+      ),
+      "rgb(0, 0, 0)",
+    );
+    await coldPage.screenshot({ path: "/tmp/barber-before-hydration.png" });
+    await coldPage.waitForFunction(
+      () => document.documentElement.dataset.introExpired === "true",
+      {},
+      { timeout: 6500 },
+    );
+    assert.equal(
+      await coldPage.evaluate(
+        () => document.documentElement.dataset.introPending,
+      ),
+      undefined,
+      "Failed bundle must never leave the website covered",
+    );
+    await coldPage.goto(base + "/sobre", { waitUntil: "domcontentloaded" });
+    assert.equal(
+      await coldPage.evaluate(
+        () => document.documentElement.dataset.introPending,
+      ),
+      undefined,
+      "Other routes must open directly",
+    );
+    await coldPage.evaluate(() =>
+      sessionStorage.setItem("barber-studio:intro:v2", "seen"),
+    );
+    await coldPage.goto(base, { waitUntil: "domcontentloaded" });
+    assert.equal(
+      await coldPage.evaluate(
+        () => document.documentElement.dataset.introPending,
+      ),
+      undefined,
+      "Seen sessions must not flash black before hydration",
+    );
+    await cold.close();
+    const late = await browser.newContext();
+    let releaseBundles;
+    const bundlesReady = new Promise((resolve) => {
+      releaseBundles = resolve;
+    });
+    await late.route("**/_next/static/**/*.js", async (route) => {
+      await bundlesReady;
+      await route.continue();
+    });
+    const latePage = await late.newPage();
+    await latePage.goto(base, { waitUntil: "domcontentloaded" });
+    await latePage.waitForFunction(
+      () => document.documentElement.dataset.introExpired === "true",
+      {},
+      { timeout: 6500 },
+    );
+    releaseBundles();
+    await latePage.waitForLoadState("networkidle");
+    assert.equal(
+      await latePage.locator(".brand-intro").count(),
+      0,
+      "A late bundle must not launch the intro after the website was released",
+    );
+    await late.close();
+    const noJS = await browser.newContext({ javaScriptEnabled: false });
+    const noJSPage = await noJS.newPage();
+    await noJSPage.goto(base);
+    assert.equal(
+      await noJSPage.evaluate(
+        () => document.documentElement.dataset.introPending,
+      ),
+      undefined,
+      "Content remains accessible with JavaScript disabled",
+    );
+    await noJS.close();
     const context = await browser.newContext({
       viewport: { width: 1440, height: 1000 },
     });

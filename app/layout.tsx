@@ -1,3 +1,4 @@
+import { introBootstrap } from "@/lib/intro-bootstrap";
 import BrandIntro from "@/components/intro";
 import { brand } from "@/lib/content";
 import Progress from "@/components/progress";
@@ -19,7 +20,10 @@ export const metadata: Metadata = {
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: introBootstrap }} />
+      </head>
       <body>
         <a className="skip" href="#conteudo">
           Pular para o conteúdo
