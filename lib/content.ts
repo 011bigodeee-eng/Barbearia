@@ -1,4 +1,27 @@
-export const brand = "BARBER STUDIO";
+export const brand =
+  process.env.NEXT_PUBLIC_BRAND_NAME?.trim() || "BARBER STUDIO";
+export const highlights = [
+  {
+    title: "ATENDIMENTO PREMIUM",
+    text: "Tempo para ouvir. Atenção para entender. Um conceito de cuidado sem pressa.",
+    href: "/sobre",
+  },
+  {
+    title: "PROFISSIONAIS ESPECIALIZADOS",
+    text: "Conheça a proposta de apresentação da equipe e suas especialidades.",
+    href: "/profissionais",
+  },
+  {
+    title: "PRECISÃO EM CADA CORTE",
+    text: "Proporção, textura e acabamento como expressões de um estilo pessoal.",
+    href: "/servicos",
+  },
+  {
+    title: "AGENDAMENTO ONLINE",
+    text: "Explore a seleção de serviço, profissional, data e horário na prévia interativa.",
+    href: "/agendamento",
+  },
+];
 export const services = [
   {
     id: "corte",

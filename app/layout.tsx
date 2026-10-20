@@ -1,3 +1,5 @@
+import BrandIntro from "@/components/intro";
+import { brand } from "@/lib/content";
 import Progress from "@/components/progress";
 import type { Metadata } from "next";
 import "@fontsource/manrope/400.css";
@@ -8,8 +10,8 @@ import "./globals.css";
 import { Navigation, Footer } from "@/components/chrome";
 export const metadata: Metadata = {
   title: {
-    default: "BARBER STUDIO — Precisão em cada detalhe",
-    template: "%s — BARBER STUDIO",
+    default: `${brand} — Seu estilo. Nossa assinatura.`,
+    template: `%s — ${brand}`,
   },
   description:
     "Um novo olhar sobre o cuidado masculino. Técnica, tempo e personalidade.",
@@ -23,9 +25,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           Pular para o conteúdo
         </a>
         <Progress />
-        <Navigation />
-        {children}
-        <Footer />
+        <BrandIntro name={brand} />
+        <div id="site-shell">
+          <Navigation />
+          {children}
+          <Footer />
+        </div>
       </body>
     </html>
   );

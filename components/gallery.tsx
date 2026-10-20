@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import EditorialPhoto from "./editorial-photo";
 import { photos } from "@/lib/content";
 const items = [
   { src: photos.cut, type: "Cortes", title: "Precisão em perspectiva" },
@@ -57,28 +59,35 @@ export default function Gallery() {
               onClick={() => setSelected(i)}
               aria-label={"Ampliar " + i.title}
             >
-              <img loading="lazy" src={i.src} alt={i.title} />
+              <EditorialPhoto src={i.src} alt={i.title} />
               <span>{i.title} ↗</span>
             </button>
           ))}
       </div>
-      {selected && (
-        <div
-          className="lightbox"
-          role="dialog"
-          aria-modal="true"
-          aria-label={selected.title}
-        >
-          <button
-            ref={close}
-            onClick={() => setSelected(null)}
-            aria-label="Fechar imagem"
+      {selected &&
+        createPortal(
+          <div
+            className="lightbox"
+            role="dialog"
+            aria-modal="true"
+            aria-label={selected.title}
           >
-            <X />
-          </button>
-          <img src={selected.src} alt={selected.title} />
-        </div>
-      )}
+            <button
+              ref={close}
+              onClick={() => setSelected(null)}
+              aria-label="Fechar imagem"
+            >
+              <X />
+            </button>
+            <EditorialPhoto
+              src={selected.src}
+              alt={selected.title}
+              priority
+              sizes="90vw"
+            />
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

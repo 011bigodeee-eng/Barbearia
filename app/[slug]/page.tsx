@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { services, money, photos } from "@/lib/content";
+import EditorialPhoto from "@/components/editorial-photo";
+import ServiceCard from "@/components/service-card";
+import { services, photos, brand } from "@/lib/content";
 import { Button, Reveal } from "@/components/chrome";
 import Gallery from "@/components/gallery";
 const titles: Record<string, string> = {
@@ -32,7 +34,9 @@ export default async function Page({
     <main id="conteudo" className="page-shell">
       <Reveal>
         <div className="page-intro">
-          <span className="eyebrow">BARBER STUDIO / {slug.toUpperCase()}</span>
+          <span className="eyebrow">
+            {brand} / {slug.toUpperCase()}
+          </span>
           <h1>{titles[slug]}</h1>
         </div>
         {slug === "servicos" && (
@@ -43,21 +47,16 @@ export default async function Page({
             </p>
             <div className="catalog">
               {services.map((s, i) => (
-                <Link
-                  className="service-row"
-                  href={"/agendamento?servico=" + s.id}
+                <ServiceCard
                   key={s.id}
-                >
-                  <span className="service-number">0{i + 1}</span>
-                  <div>
-                    <h3>{s.name}</h3>
-                    <p>{s.description}</p>
-                    <small>
-                      {s.duration} MIN · {money(s.price)}
-                    </small>
-                  </div>
-                  <span>↗</span>
-                </Link>
+                  service={s}
+                  index={i}
+                  photo={
+                    [photos.cut, photos.detail, photos.hero, photos.space][
+                      i % 4
+                    ]
+                  }
+                />
               ))}
             </div>
           </>
@@ -65,11 +64,12 @@ export default async function Page({
         {slug === "sobre" && (
           <>
             <div className="about-grid">
-              <img
-                style={{ height: 500 }}
-                src={photos.space}
-                alt="Ambiente da barbearia"
-              />
+              <div style={{ height: 500 }}>
+                <EditorialPhoto
+                  src={photos.space}
+                  alt="Ambiente da barbearia"
+                />
+              </div>
               <div className="about-copy">
                 <h3>Onde a tradição encontra a precisão.</h3>
                 <p>
@@ -95,7 +95,24 @@ export default async function Page({
               Esta é uma prévia editorial. Os perfis serão personalizados com
               fotos, nomes e especialidades da equipe real.
             </div>
-            <Button href="/agendamento">EXPLORAR AGENDAMENTO</Button>
+            <div className="team-preview">
+              {["01", "02"].map((n, i) => (
+                <article className="team-profile" key={n}>
+                  <EditorialPhoto
+                    src={[photos.hero, photos.detail][i]}
+                    alt="Imagem editorial ilustrativa do ofício de barbeiro"
+                  />
+                  <h3>Profissional {n}</h3>
+                  <p>
+                    Perfil demonstrativo. Nome, especialidade e imagem aguardam
+                    personalização com a equipe real.
+                  </p>
+                  <Button href="/agendamento" outline>
+                    EXPLORAR AGENDAMENTO
+                  </Button>
+                </article>
+              ))}
+            </div>
           </>
         )}
         {slug === "galeria" && <Gallery />}

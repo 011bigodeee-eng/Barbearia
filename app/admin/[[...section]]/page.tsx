@@ -1,3 +1,4 @@
+import { brand } from "@/lib/content";
 import Admin from "@/components/admin";
 export const metadata = {
   title: "Área administrativa",
@@ -7,7 +8,7 @@ export default function Page() {
   return (
     <main id="conteudo" className="page-shell">
       <div className="page-intro">
-        <span className="eyebrow">BARBER STUDIO / ÁREA RESTRITA</span>
+        <span className="eyebrow">{brand} / PRÉVIA DO PAINEL</span>
         <h1>
           SEU ESTÚDIO.
           <br />

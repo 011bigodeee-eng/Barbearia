@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import { brand } from "@/lib/content";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { ArrowUpRight, Menu, X, ArrowUp } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
@@ -12,6 +14,8 @@ const links = [
 ];
 export function Navigation() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const reduced = useReducedMotion();
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement;
@@ -48,17 +52,22 @@ export function Navigation() {
     <>
       <header>
         <Link className="logo" href="/" onClick={() => setOpen(false)}>
-          BARBER<span>STUDIO®</span>
+          <span className="logo-name">{brand}</span>
+          <span className="logo-sub">THE ART OF GROOMING</span>
         </Link>
         <nav aria-label="Principal">
           {links.map(([n, p]) => (
-            <Link key={p} href={p}>
+            <Link
+              key={p}
+              href={p}
+              aria-current={pathname === p ? "page" : undefined}
+            >
               {n}
             </Link>
           ))}
         </nav>
         <Link className="nav-book" href="/agendamento">
-          Reserve seu horário <ArrowUpRight size={15} />
+          Agendar horário <ArrowUpRight size={15} />
         </Link>
         <button
           className="menu-toggle"
@@ -71,11 +80,22 @@ export function Navigation() {
         </button>
       </header>
       {open && (
-        <div className="mobile-menu" id="mobile-menu">
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+          className="mobile-menu"
+          id="mobile-menu"
+        >
           <nav aria-label="Navegação móvel">
             {[["Início", "/"], ...links, ["Agendamento", "/agendamento"]].map(
               ([n, p], i) => (
-                <Link onClick={() => setOpen(false)} key={p} href={p}>
+                <Link
+                  onClick={() => setOpen(false)}
+                  key={p}
+                  href={p}
+                  style={{ animationDelay: `${i * 35}ms` }}
+                >
                   <small>0{i + 1}</small>
                   {n}
                   <ArrowUpRight />
@@ -83,7 +103,7 @@ export function Navigation() {
               ),
             )}
           </nav>
-        </div>
+        </motion.div>
       )}
     </>
   );
@@ -131,7 +151,7 @@ export function Reveal({
   const reduce = useReducedMotion();
   return (
     <motion.div
-      className={className}
+      className={`reveal ${className}`}
       initial={reduce ? false : { opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.12 }}
@@ -146,7 +166,8 @@ export function Footer() {
     <footer>
       <div className="footer-top">
         <Link className="logo" href="/">
-          BARBER<span>STUDIO®</span>
+          <span className="logo-name">{brand}</span>
+          <span className="logo-sub">THE ART OF GROOMING</span>
         </Link>
         <p>
           Estilo é pessoal.
@@ -157,7 +178,9 @@ export function Footer() {
         </Link>
       </div>
       <div className="footer-bottom">
-        <span>© {new Date().getFullYear()} BARBER STUDIO</span>
+        <span>
+          © {new Date().getFullYear()} {brand}
+        </span>
         <span>CONCEITO DEMONSTRATIVO · CONTEÚDO EDITÁVEL</span>
         <a href="#conteudo" aria-label="Voltar ao conteúdo">
           VOLTAR AO TOPO <ArrowUp size={12} />

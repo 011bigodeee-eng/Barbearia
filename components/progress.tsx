@@ -30,7 +30,7 @@ export default function Progress() {
         left: 0,
         width: "100%",
         height: 2,
-        background: "#eee",
+        background: "#111",
         transformOrigin: "left",
         transform: "scaleX(0)",
         zIndex: 70,

@@ -27,3 +27,13 @@ As fotografias usam `images.unsplash.com`. A rede deste ambiente bloqueou esse d
 `npm test`: validações de entrada preservadas como base para evolução futura. `npm run lint`: checagem TypeScript. `npm run build`: build de produção.
 
 Com Chromium em `/usr/bin/chromium` e o servidor em execução, `npm run test:browser` verifica rotas, menu mobile, galeria e fluxo demonstrativo de agendamento. Não comprova reservas reais, pois elas estão propositalmente desativadas. O teste informa o estado das imagens separadamente.
+
+## Direção white luxury
+
+A identidade atual usa superfícies brancas, Manrope, tipografia preta e fotografias monocromáticas. A intro original usa GSAP e profundidade tipográfica em CSS: feixe de luz, marca metálica, transição branca e alinhamento com a marca na home. Dura aproximadamente 3,3 segundos, tem botão de pular e Escape, e é omitida com `prefers-reduced-motion`. A sessão usa `sessionStorage` com fallback em memória; a intro não se repete ao navegar. Um limite independente de 4 segundos libera o conteúdo se a animação não terminar. Não há som ou recursos da Netflix.
+
+Configure `NEXT_PUBLIC_BRAND_NAME` opcionalmente antes do build para personalizar o nome na intro, navegação, rodapé e metadados. O valor padrão vem de `lib/content.ts`. Os quatro pilares editoriais ficam em `highlights` no mesmo arquivo. Não existe edição administrativa persistente nesta prévia.
+
+Os cards têm profundidade sutil no mouse e são estáticos com movimento reduzido. A navalha 3D carrega apenas perto da seção em desktops compatíveis; usa geometria original, materiais físicos, iluminação de estúdio e fallback CSS em mobile, movimento reduzido ou falha gráfica. Fotografias têm `srcset`, lazy loading e fallback editorial identificado quando a rede falha.
+
+O agendamento mantém a simulação local, agora em quatro etapas com progresso, volta preservando seleção e resumo lateral. Não há etapa de dados pessoais ou chamada de gravação. A integração de banco continua desativada conforme solicitado anteriormente.
